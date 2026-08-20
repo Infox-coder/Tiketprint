@@ -683,7 +683,7 @@
       window.print();
     }
 
-    // Búsqueda con APIPerú + Manejo de errores y llenado manual
+    // Manejo de la consulta a APIPerú (Ruta /api/v1/dni/)
     async function handleNuevoPaciente(event) {
       event.preventDefault();
       const dniInput = document.getElementById('dni-nuevo');
@@ -699,7 +699,7 @@
       btnSubmit.disabled = true;
 
       const token = "c81fe686dfef3d4f8ff0f8dc4e542ef9a98ef16f3ff06c9e830c2dfb8e723225";
-      const apiUrl = `https://apiperu.dev/api/dni/${dni}`;
+      const apiUrl = `https://apiperu.dev/api/v1/dni/${dni}`;
 
       try {
         const response = await fetch(apiUrl, {
@@ -713,17 +713,17 @@
 
         const data = await response.json();
 
-        if (response.ok && data && data.success && data.data) {
-          const res = data.data;
+        if (response.ok && data && (data.success || data.nombres || data.data)) {
+          const res = data.data || data;
           const nombres = res.nombres || "";
-          const apellidos = `${res.apellido_paterno || ''} ${res.apellido_materno || ''}`.trim();
+          const apellidos = `${res.apellido_paterno || res.apellidoPaterno || ''} ${res.apellido_materno || res.apellidoMaterno || ''}`.trim();
+          
           procederConfirmacion(dni, nombres, apellidos);
         } else {
-          alert("⚠️ DNI no encontrado en RENIEC o límite de consultas consumido. Ingrese los datos manualmente.");
           procederConfirmacion(dni, "", "");
         }
       } catch (error) {
-        alert("⚠️ No se pudo conectar con el servicio de RENIEC. Ingrese los datos manualmente.");
+        console.error("Error en la petición API:", error);
         procederConfirmacion(dni, "", "");
       } finally {
         btnSubmit.innerText = "🔍 Consultar RENIEC";
