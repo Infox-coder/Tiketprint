@@ -3,950 +3,158 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clínica Oftalmonorte - Sistema de Atención</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <title>Consulta DNI - Tiketprint</title>
   <style>
-    :root {
-      --primary: #0f4c81;
-      --primary-hover: #083358;
-      --accent: #00b4d8;
-      --accent-hover: #0077b6;
-      --bg: #f0f4f8;
-      --surface: #ffffff;
-      --text: #1e293b;
-      --text-muted: #64748b;
-      --border: #cbd5e1;
-      --radius: 24px;
-      --shadow: 0 12px 30px rgba(15, 76, 129, 0.1);
-      --danger: #dc2626;
-      --danger-hover: #b91c1c;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    }
-
     body {
-      background-color: var(--bg);
-      color: var(--text);
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      position: relative;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 35px;
-    }
-
-    header h1 {
-      font-size: 2.8rem;
-      color: var(--primary);
-      margin-bottom: 8px;
-      font-weight: 800;
-    }
-
-    header p {
-      font-size: 1.3rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .btn-shutdown-discreet {
-      position: fixed;
-      top: 24px;
-      right: 24px;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--surface);
-      color: var(--text-muted);
-      border: 2px solid var(--border);
-      font-size: 1.4rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1000;
-      outline: none;
-    }
-
-    .btn-shutdown-discreet:hover, .btn-shutdown-discreet:focus {
-      background-color: var(--danger);
-      color: #ffffff;
-      border-color: var(--danger);
-      transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.35);
-    }
-
-    @media (max-width: 768px) {
-      .btn-shutdown-discreet {
-        top: 15px;
-        right: 15px;
-        width: 42px;
-        height: 42px;
-        font-size: 1.2rem;
-      }
-    }
-
-    .menu-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 25px;
-      width: 100%;
-      max-width: 900px;
-    }
-
-    @media (max-width: 768px) {
-      .menu-container {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .btn-square {
-      background: var(--surface);
-      border: 3px solid #e2e8f0;
-      border-radius: var(--radius);
-      aspect-ratio: 1 / 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 25px;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn-square:hover, .btn-square:focus {
-      border-color: var(--accent);
-      transform: translateY(-8px);
-      box-shadow: 0 20px 35px rgba(0, 180, 216, 0.2);
-      outline: none;
-    }
-
-    .btn-square .icon-box {
-      font-size: 4rem;
-      margin-bottom: 15px;
-      background: #e0f2fe;
-      width: 90px;
-      height: 90px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s ease;
-    }
-
-    .btn-square:hover .icon-box {
-      transform: scale(1.1);
-      background: var(--accent);
-      color: white;
-    }
-
-    .btn-square .btn-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary);
-      line-height: 1.2;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(8px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      z-index: 100;
+      margin: 0;
     }
 
     .card {
-      background: var(--surface);
-      width: 100%;
-      max-width: 700px;
-      border-radius: var(--radius);
-      padding: 35px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      max-height: 90vh;
-      overflow-y: auto;
-      animation: popup 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    @keyframes popup {
-      from { opacity: 0; transform: scale(0.85); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-      border-bottom: 2px solid #f1f5f9;
-      padding-bottom: 15px;
-    }
-
-    .card-title {
-      font-size: 2rem;
-      color: var(--primary);
-      font-weight: 800;
-    }
-
-    .btn-close {
-      background: #ef4444;
-      color: white;
-      border: none;
-      font-size: 1.3rem;
-      font-weight: bold;
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-
-    .btn-close:hover {
-      background: #dc2626;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: var(--text);
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 18px;
-      font-size: 1.5rem;
-      border: 2px solid var(--border);
-      border-radius: 16px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .form-control:focus {
-      border-color: var(--accent);
-    }
-
-    .btn-submit {
-      width: 100%;
-      background-color: var(--accent);
-      color: white;
-      border: none;
-      padding: 20px;
-      font-size: 1.5rem;
-      font-weight: 800;
-      border-radius: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .btn-submit:hover {
-      background-color: var(--accent-hover);
-    }
-
-    .patient-info {
-      background-color: #f8fafc;
-      border: 2px solid var(--border);
+      background: white;
       padding: 25px;
-      border-radius: 18px;
-      margin-top: 25px;
-    }
-
-    .info-item {
-      font-size: 1.3rem;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px dashed var(--border);
-      padding-bottom: 10px;
-    }
-
-    .info-item:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-    }
-
-    .info-item span {
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .info-item input {
-      font-size: 1.2rem;
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      width: 60%;
-      text-align: right;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .surgery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 15px;
-    }
-
-    .surgery-card {
-      background-color: #f8fafc;
-      border: 2px solid var(--border);
-      padding: 20px;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .surgery-card:hover {
-      border-color: var(--accent);
-      background-color: #f0f9ff;
-      transform: translateY(-3px);
-    }
-
-    .surgery-name {
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--primary);
-      margin-bottom: 6px;
-    }
-
-    .surgery-desc {
-      font-size: 1.05rem;
-      color: var(--text-muted);
-    }
-
-    .surgery-badge {
-      display: inline-block;
-      margin-top: 10px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--accent-hover);
-      text-transform: uppercase;
-    }
-
-    .surgery-selection-detail {
-      margin-top: 25px;
-      padding: 20px;
-      background: #e0f2fe;
-      border-radius: 16px;
-      border-left: 6px solid var(--primary);
-      display: none;
-    }
-
-    .surgery-selection-detail h3 {
-      color: var(--primary);
-      font-size: 1.4rem;
-      margin-bottom: 8px;
-    }
-
-    .bottom-panel {
-      margin-top: 30px;
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      max-width: 900px;
-    }
-
-    .excel-panel {
-      padding: 15px 25px;
-      background: var(--surface);
-      border-radius: 16px;
-      text-align: center;
-      border: 2px dashed var(--accent);
-      box-shadow: var(--shadow);
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       width: 100%;
       max-width: 400px;
     }
 
-    .excel-panel label {
-      font-size: 1.1rem;
-      color: var(--primary);
+    h2 {
+      margin-top: 0;
+      color: #1a365d;
+      font-size: 22px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #4a5568;
+      font-size: 14px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 15px;
+    }
+
+    input[readonly] {
+      background-color: #edf2f7;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007791;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
       cursor: pointer;
-      font-weight: 700;
+      transition: background 0.2s;
     }
 
-    #ticket-print-area {
-      display: none;
+    button:hover {
+      background-color: #005a6e;
     }
 
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-      #ticket-print-area, #ticket-print-area * {
-        visibility: visible;
-      }
-      #ticket-print-area {
-        display: block !important;
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 80mm;
-        padding: 5mm;
-        font-family: 'Courier New', Courier, monospace;
-        color: #000;
-        background: #fff;
-      }
-      .ticket-header {
-        text-align: center;
-        border-bottom: 1px dashed #000;
-        padding-bottom: 8px;
-        margin-bottom: 8px;
-      }
-      .ticket-header h2 {
-        font-size: 14pt;
-        font-weight: bold;
-        margin-bottom: 4px;
-      }
-      .ticket-header p {
-        font-size: 8pt;
-      }
-      .ticket-body {
-        font-size: 10pt;
-        line-height: 1.3;
-      }
-      .ticket-field {
-        margin-bottom: 6px;
-      }
-      .ticket-field-label {
-        font-size: 8pt;
-        text-transform: uppercase;
-      }
-      .ticket-field-value {
-        font-size: 11pt;
-        font-weight: bold;
-      }
-      .ticket-footer {
-        border-top: 1px dashed #000;
-        margin-top: 10px;
-        padding-top: 8px;
-        text-align: center;
-        font-size: 8pt;
-      }
+    button:disabled {
+      background-color: #a0aec0;
+      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
 
-  <button class="btn-shutdown-discreet" onclick="apagarSistema()" title="Apagar / Salir del Sistema">⏻</button>
+  <div class="card">
+    <h2>Paciente Nuevo</h2>
 
-  <header>
-    <h1>Clínica Oftalmonorte</h1>
-    <p>Seleccione una opción en pantalla</p>
-  </header>
+    <!-- Entrada de DNI -->
+    <div class="form-group">
+      <label for="dniInput">Ingrese su número de DNI:</label>
+      <input type="text" id="dniInput" placeholder="Ej: 19260615" maxlength="8">
+    </div>
 
-  <main class="menu-container">
-    <button class="btn-square" onclick="openCard('card-nuevo')">
-      <div class="icon-box">👤</div>
-      <div class="btn-title">Paciente Nuevo</div>
-    </button>
-    <button class="btn-square" onclick="openCard('card-continuo')">
-      <div class="icon-box">📋</div>
-      <div class="btn-title">Paciente Continuo</div>
-    </button>
-    <button class="btn-square" onclick="openCard('card-cirugias')">
-      <div class="icon-box">👁️</div>
-      <div class="btn-title">Información de Cirugías</div>
-    </button>
-  </main>
+    <!-- Botón de consulta -->
+    <div class="form-group">
+      <button id="btnConsultar" onclick="consultarRENIEC()">⌛ Consultando RENIEC...</button>
+    </div>
 
-  <div class="bottom-panel">
-    <div class="excel-panel">
-      <p style="margin-bottom: 4px; font-weight: 600;">Base de datos local (.xlsx)</p>
-      <input type="file" id="excel-file" accept=".xlsx, .xls" style="display:none;" onchange="loadExcel(event)">
-      <label for="excel-file">📁 Cargar o Actualizar Excel</label>
-      <span id="excel-status" style="display:block; margin-top:4px; font-size: 0.9rem; color: #059669; font-weight: 700;"></span>
+    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+
+    <!-- Campos autocompletados -->
+    <div class="form-group">
+      <label for="nombres">Nombres:</label>
+      <input type="text" id="nombres" placeholder="Nombres del paciente">
+    </div>
+
+    <div class="form-group">
+      <label for="apellidoPaterno">Apellido Paterno:</label>
+      <input type="text" id="apellidoPaterno" placeholder="Apellido paterno">
+    </div>
+
+    <div class="form-group">
+      <label for="apellidoMaterno">Apellido Materno:</label>
+      <input type="text" id="apellidoMaterno" placeholder="Apellido materno">
     </div>
   </div>
-
-  <!-- Modal Paciente Nuevo -->
-  <div class="overlay" id="card-nuevo">
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Paciente Nuevo</h2>
-        <button class="btn-close" onclick="closeCard('card-nuevo')">✕</button>
-      </div>
-      <form onsubmit="handleNuevoPaciente(event)">
-        <div class="form-group">
-          <label for="dni-nuevo">Ingrese su número de DNI:</label>
-          <input type="number" id="dni-nuevo" class="form-control" placeholder="Ej. 12345678" required>
-        </div>
-        <button type="submit" id="btn-submit-nuevo" class="btn-submit">🔍 Consultar RENIEC</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Confirmación Paciente Nuevo -->
-  <div class="overlay" id="card-confirmacion-nuevo">
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Datos del Paciente</h2>
-        <button class="btn-close" onclick="closeCard('card-confirmacion-nuevo')">✕</button>
-      </div>
-      <div class="patient-info" style="display: block; margin-top: 0;">
-        <div class="info-item">
-          <label for="confirm-dni">DNI:</label>
-          <span id="confirm-dni">-</span>
-        </div>
-        <div class="info-item">
-          <label for="confirm-apellidos">Apellidos:</label>
-          <input type="text" id="confirm-apellidos" placeholder="Ingrese Apellidos">
-        </div>
-        <div class="info-item">
-          <label for="confirm-nombres">Nombres:</label>
-          <input type="text" id="confirm-nombres" placeholder="Ingrese Nombres">
-        </div>
-      </div>
-      <button class="btn-submit" onclick="confirmarEImprimirNuevo()" style="margin-top: 20px;">🖨️ Confirmar e Imprimir Ticket</button>
-    </div>
-  </div>
-
-  <!-- Modal Paciente Continuo -->
-  <div class="overlay" id="card-continuo">
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Paciente Continuo</h2>
-        <button class="btn-close" onclick="closeCard('card-continuo')">✕</button>
-      </div>
-      <div class="form-group">
-        <label for="dni-continuo">Ingrese su DNI:</label>
-        <input type="number" id="dni-continuo" class="form-control" placeholder="Ej. 12345678">
-      </div>
-      <button class="btn-submit" onclick="searchPatient()">🔍 Buscar e Imprimir Historia</button>
-
-      <div class="patient-info" id="patient-data" style="display: none;">
-        <div class="info-item">Apellidos: <span id="info-apellidos">-</span></div>
-        <div class="info-item">Nombres: <span id="info-nombres">-</span></div>
-        <div class="info-item">Edad: <span id="info-edad">-</span></div>
-        <div class="info-item">Sexo: <span id="info-sexo">-</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Cirugías -->
-  <div class="overlay" id="card-cirugias">
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Selección de Cirugías</h2>
-        <button class="btn-close" onclick="closeCard('card-cirugias')">✕</button>
-      </div>
-      <p style="margin-bottom: 20px; font-size: 1.2rem; color: var(--text-muted);">Seleccione una cirugía para imprimir la hoja informativa:</p>
-      
-      <div class="surgery-grid">
-        <div class="surgery-card" onclick="selectAndPrintSurgery('Catarata', 'Opacidad del cristalino que afecta la visión.', 'Tratamiento de elección: Facoemulsificación con implante de lente intraocular (LIO). Procedimiento ambulatorio de rápida recuperación.')">
-          <div>
-            <div class="surgery-name">Catarata</div>
-            <div class="surgery-desc">Opacidad del cristalino que afecta la visión.</div>
-          </div>
-          <span class="surgery-badge">🖨️ Seleccionar e Imprimir</span>
-        </div>
-
-        <div class="surgery-card" onclick="selectAndPrintSurgery('Pterigión (Carnosidad)', 'Carnosidad sobre la superficie ocular.', 'Extirpación del tejido fibrovascular sobre la córnea con colocación de autoinjerto conjuntival para reducir el riesgo de recidiva y recuperar la transparencia ocular.')">
-          <div>
-            <div class="surgery-name">Pterigión (Carnosidad)</div>
-            <div class="surgery-desc">Carnosidad sobre la superficie ocular.</div>
-          </div>
-          <span class="surgery-badge">🖨️ Seleccionar e Imprimir</span>
-        </div>
-
-        <div class="surgery-card" onclick="selectAndPrintSurgery('Chalazión', 'Bulto en el párpado por obstrucción lipídica.', 'Procedimiento quirúrgico menor y rápido para el drenaje de la glándula sebácea obstruida en el párpado, aliviando la inflamación.')">
-          <div>
-            <div class="surgery-name">Chalazión</div>
-            <div class="surgery-desc">Bulto en el párpado por obstrucción lipídica.</div>
-          </div>
-          <span class="surgery-badge">🖨️ Seleccionar e Imprimir</span>
-        </div>
-
-        <div class="surgery-card" onclick="selectAndPrintSurgery('Faco + Vitrecto (Catarata + Retina)', 'Cirugía combinada: Catarata + Retina.', 'Intervención integral donde se remueve la catarata mediante facoemulsificación y se realiza vitrectomía posterior para tratar patologías complejas de retina.')">
-          <div>
-            <div class="surgery-name">Faco + Vitrecto</div>
-            <div class="surgery-desc">Cirugía combinada: Catarata + Retina.</div>
-          </div>
-          <span class="surgery-badge">🖨️ Seleccionar e Imprimir</span>
-        </div>
-
-        <div class="surgery-card" onclick="selectAndPrintSurgery('Trabeculectomía (Glaucoma)', 'Tratamiento para control de Glaucoma.', 'Cirugía filtrante para crear una nueva vía de drenaje del humor acuoso, disminuyendo eficazmente la presión intraocular y previniendo el daño al nervio óptico.')">
-          <div>
-            <div class="surgery-name">Trabeculectomía</div>
-            <div class="surgery-desc">Tratamiento para control de Glaucoma.</div>
-          </div>
-          <span class="surgery-badge">🖨️ Seleccionar e Imprimir</span>
-        </div>
-
-        <div class="surgery-card" onclick="selectAndPrintSurgery('Faco + Trabe (Catarata + Glaucoma)', 'Cirugía combinada: Catarata + Glaucoma.', 'Procedimiento quirúrgico dual que resuelve la opacidad del cristalino y regula la presión intraocular en un mismo acto quirúrgico.')">
-          <div>
-            <div class="surgery-name">Faco + Trabe</div>
-            <div class="surgery-desc">Cirugía combinada: Catarata + Glaucoma.</div>
-          </div>
-          <span class="surgery-badge">🖨️ Seleccionar e Imprimir</span>
-        </div>
-
-        <div class="surgery-card" onclick="selectAndPrintSurgery('Blefaroplastia (Párpados)', 'Cirugía correccional de Párpados.', 'Remodelación quirúrgica estética y funcional de los párpados superiores e inferiores mediante la resección del exceso de piel y bolsas de grasa.')">
-          <div>
-            <div class="surgery-name">Blefaroplastia</div>
-            <div class="surgery-desc">Cirugía correccional de Párpados.</div>
-          </div>
-          <span class="surgery-badge">🖨️ Seleccionar e Imprimir</span>
-        </div>
-
-        <div class="surgery-card" onclick="selectAndPrintSurgery('Refractiva (Cirugía Láser)', 'Cirugía Láser (Miopía, Astigmatismo, etc.)', 'Corrección con tecnología Láser avanzada (LASIK/PRK) para moldear la córnea y corregir defectos refractivos, eliminando o reduciendo el uso de anteojos.')">
-          <div>
-            <div class="surgery-name">Refractiva</div>
-            <div class="surgery-desc">Cirugía Láser (Miopía, Astigmatismo, etc.)</div>
-          </div>
-          <span class="surgery-badge">🖨️ Seleccionar e Imprimir</span>
-        </div>
-      </div>
-
-      <div class="surgery-selection-detail" id="surgery-detail">
-        <h3 id="selected-title">Cirugía Seleccionada</h3>
-        <p id="selected-desc" style="font-size: 1.2rem; color: var(--text);"></p>
-      </div>
-    </div>
-  </div>
-
-  <div id="ticket-print-area"></div>
 
   <script>
-    let contadorPN = parseInt(localStorage.getItem('contadorPN')) || 1;
-    let contadorPC = parseInt(localStorage.getItem('contadorPC')) || 1;
-    let contadorICX = parseInt(localStorage.getItem('contadorICX')) || 1;
+    // URL Web App de Google Apps Script configurada
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxdlFsiBnAVLFhQVkxsCxiiXgZ_DdTotbEr7PhjG5pvjSR3bw7a4gKDtzP5ZwA8kfjZ/exec";
 
-    let database = [];
-    let currentDNI = "";
+    async function consultarRENIEC() {
+      const dniInput = document.getElementById("dniInput").value.trim();
+      const btn = document.getElementById("btnConsultar");
 
-    function getTicketNumber(prefix, num) {
-      return prefix + '-' + String(num).padStart(4, '0');
-    }
-
-    function getCurrentDateTime() {
-      const now = new Date();
-      return now.toLocaleDateString('es-PE') + ' ' + now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function openCard(id) {
-      document.getElementById(id).style.display = 'flex';
-    }
-
-    function closeCard(id) {
-      document.getElementById(id).style.display = 'none';
-      if (id === 'card-continuo') {
-        document.getElementById('patient-data').style.display = 'none';
-        document.getElementById('dni-continuo').value = '';
-      }
-      if (id === 'card-nuevo') {
-        document.getElementById('dni-nuevo').value = '';
-      }
-    }
-
-    function printTicket(htmlContent) {
-      const printArea = document.getElementById('ticket-print-area');
-      printArea.innerHTML = htmlContent;
-      window.print();
-    }
-
-    // Manejo de la consulta a APIPerú (Ruta /api/v1/dni/)
-    async function handleNuevoPaciente(event) {
-      event.preventDefault();
-      const dniInput = document.getElementById('dni-nuevo');
-      const dni = dniInput.value.trim();
-      const btnSubmit = document.getElementById('btn-submit-nuevo');
-
-      if (dni.length !== 8 || isNaN(dni)) {
+      // Validar longitud del DNI
+      if (dniInput.length !== 8 || isNaN(dniInput)) {
         alert("Por favor, ingrese un número de DNI válido de 8 dígitos.");
         return;
       }
 
-      btnSubmit.innerText = "⏳ Consultando RENIEC...";
-      btnSubmit.disabled = true;
-
-      const token = "c81fe686dfef3d4f8ff0f8dc4e542ef9a98ef16f3ff06c9e830c2dfb8e723225";
-      const apiUrl = `https://apiperu.dev/api/v1/dni/${dni}`;
+      // Cambiar estado visual del botón durante la carga
+      btn.innerText = "⏳ Consultando RENIEC...";
+      btn.disabled = true;
 
       try {
-        const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        });
-
+        // Petición al Web App
+        const response = await fetch(`${WEB_APP_URL}?dni=${dniInput}`);
         const data = await response.json();
 
-        if (response.ok && data && (data.success || data.nombres || data.data)) {
-          const res = data.data || data;
-          const nombres = res.nombres || "";
-          const apellidos = `${res.apellido_paterno || res.apellidoPaterno || ''} ${res.apellido_materno || res.apellidoMaterno || ''}`.trim();
-          
-          procederConfirmacion(dni, nombres, apellidos);
+        if (data.dni) {
+          // Asignar los datos recibidos a los inputs correspondientes
+          document.getElementById("nombres").value = data.nombres || "";
+          document.getElementById("apellidoPaterno").value = data.apellidoPaterno || "";
+          document.getElementById("apellidoMaterno").value = data.apellidoMaterno || "";
         } else {
-          procederConfirmacion(dni, "", "");
+          alert("⚠️ DNI no encontrado en RENIEC o límite de consultas consumido. Ingrese los datos manualmente.");
         }
       } catch (error) {
-        console.error("Error en la petición API:", error);
-        procederConfirmacion(dni, "", "");
+        console.error("Error en la solicitud:", error);
+        alert("Error de conexión al consultar el servicio. Ingrese los datos manualmente.");
       } finally {
-        btnSubmit.innerText = "🔍 Consultar RENIEC";
-        btnSubmit.disabled = false;
+        // Restaurar estado del botón
+        btn.innerText = "🔍 Consultar RENIEC";
+        btn.disabled = false;
       }
-    }
-
-    function procederConfirmacion(dni, nombres, apellidos) {
-      currentDNI = dni;
-      document.getElementById('confirm-dni').innerText = dni;
-      document.getElementById('confirm-apellidos').value = apellidos;
-      document.getElementById('confirm-nombres').value = nombres;
-
-      closeCard('card-nuevo');
-      openCard('card-confirmacion-nuevo');
-    }
-
-    function confirmarEImprimirNuevo() {
-      const apellidos = document.getElementById('confirm-apellidos').value.trim();
-      const nombres = document.getElementById('confirm-nombres').value.trim();
-
-      const numTicket = getTicketNumber('PN', contadorPN);
-      contadorPN++;
-      localStorage.setItem('contadorPN', contadorPN);
-
-      const pacienteInfoHtml = (apellidos || nombres)
-        ? `<div class="ticket-field">
-            <div class="ticket-field-label">Apellidos:</div>
-            <div class="ticket-field-value" style="font-size: 11pt;">${apellidos || '-'}</div>
-           </div>
-           <div class="ticket-field">
-            <div class="ticket-field-label">Nombres:</div>
-            <div class="ticket-field-value" style="font-size: 11pt;">${nombres || '-'}</div>
-           </div>`
-        : '';
-
-      const ticketHtml = `
-        <div class="ticket-header">
-          <h2>CLÍNICA OFTALMONORTE</h2>
-          <p>TICKET DE PACIENTE NUEVO</p>
-          <div style="margin: 8px 0; border: 2px solid #000; padding: 4px; font-size: 16pt; font-weight: bold; text-align: center;">
-            N° TICKET: ${numTicket}
-          </div>
-          <p>${getCurrentDateTime()}</p>
-        </div>
-        <div class="ticket-body">
-          <div class="ticket-field">
-            <div class="ticket-field-label">Tipo de Atención:</div>
-            <div class="ticket-field-value">PACIENTE NUEVO</div>
-          </div>
-          <br>
-          <div class="ticket-field">
-            <div class="ticket-field-label">DNI del Paciente:</div>
-            <div class="ticket-field-value" style="font-size: 14pt;">${currentDNI}</div>
-          </div>
-          ${pacienteInfoHtml}
-        </div>
-        <div class="ticket-footer">
-          <p>Por favor, aguarde en sala de espera.</p>
-          <p>¡Gracias por su visita!</p>
-        </div>
-      `;
-
-      printTicket(ticketHtml);
-      closeCard('card-confirmacion-nuevo');
-    }
-
-    function searchPatient() {
-      const dniInput = document.getElementById('dni-continuo').value.trim();
-      const result = database.find(patient => String(patient.dni).trim() === String(dniInput));
-      const infoDiv = document.getElementById('patient-data');
-
-      if (result) {
-        document.getElementById('info-apellidos').innerText = result.apellidos || '-';
-        document.getElementById('info-nombres').innerText = result.nombres || '-';
-        document.getElementById('info-edad').innerText = result.edad ? result.edad + ' años' : '-';
-        document.getElementById('info-sexo').innerText = result.sex || '-';
-        infoDiv.style.display = 'block';
-
-        const numTicket = getTicketNumber('PC', contadorPC);
-
-        contadorPC++;
-        localStorage.setItem('contadorPC', contadorPC);
-
-        const ticketHtml = `
-          <div class="ticket-header">
-            <h2>CLÍNICA OFTALMONORTE</h2>
-            <p>TICKET PACIENTE CONTINUO</p>
-            <div style="margin: 8px 0; border: 2px solid #000; padding: 4px; font-size: 16pt; font-weight: bold; text-align: center;">
-              N° TICKET: ${numTicket}
-            </div>
-            <p>${getCurrentDateTime()}</p>
-          </div>
-          <div class="ticket-body">
-            <div class="ticket-field">
-              <div class="ticket-field-label">DNI:</div>
-              <div class="ticket-field-value" style="font-size: 13pt;">${result.dni}</div>
-            </div>
-            <div class="ticket-field">
-              <div class="ticket-field-label">Apellidos:</div>
-              <div class="ticket-field-value">${result.apellidos}</div>
-            </div>
-            <div class="ticket-field">
-              <div class="ticket-field-label">Nombres:</div>
-              <div class="ticket-field-value">${result.nombres}</div>
-            </div>
-            <div class="ticket-field">
-              <div class="ticket-field-label">Edad:</div>
-              <div class="ticket-field-value">${result.edad} años</div>
-            </div>
-            <div class="ticket-field">
-              <div class="ticket-field-label">Sexo:</div>
-              <div class="ticket-field-value">${result.sex}</div>
-            </div>
-          </div>
-          <div class="ticket-footer">
-            <p>Pase a consulta médica.</p>
-            <p>¡Gracias por su preferencia!</p>
-          </div>
-        `;
-
-        printTicket(ticketHtml);
-      } else {
-        alert('DNI no encontrado en la base de datos local.');
-        infoDiv.style.display = 'none';
-      }
-    }
-
-    function selectAndPrintSurgery(title, shortDesc, fullDetails) {
-      const detailDiv = document.getElementById('surgery-detail');
-      document.getElementById('selected-title').innerText = title;
-      document.getElementById('selected-desc').innerText = fullDetails;
-      detailDiv.style.display = 'block';
-
-      const numTicket = getTicketNumber('ICX', contadorICX);
-
-      contadorICX++;
-      localStorage.setItem('contadorICX', contadorICX);
-
-      const ticketHtml = `
-        <div class="ticket-header">
-          <h2>CLÍNICA OFTALMONORTE</h2>
-          <p>INFORMACIÓN DE CIRUGÍA</p>
-          <div style="margin: 8px 0; border: 2px solid #000; padding: 4px; font-size: 16pt; font-weight: bold; text-align: center;">
-            N° TICKET: ${numTicket}
-          </div>
-          <p>${getCurrentDateTime()}</p>
-        </div>
-        <div class="ticket-body">
-          <div class="ticket-field">
-            <div class="ticket-field-label">CIRUGÍA SELECCIONADA:</div>
-            <div class="ticket-field-value" style="font-size: 12pt;">${title}</div>
-          </div>
-          <br>
-          <div class="ticket-field">
-            <div class="ticket-field-label">Resumen:</div>
-            <p style="font-size: 9.5pt;">${shortDesc}</p>
-          </div>
-          <br>
-          <div class="ticket-field">
-            <div class="ticket-field-label">Detalles del Procedimiento:</div>
-            <p style="font-size: 9pt; text-align: justify;">${fullDetails}</p>
-          </div>
-        </div>
-        <div class="ticket-footer">
-          <p>Consulte con nuestro especialista para coordinar su evaluación preoperatoria.</p>
-        </div>
-      `;
-
-      printTicket(ticketHtml);
-    }
-
-    function apagarSistema() {
-      if (confirm("¿Está seguro que desea apagar/cerrar el sistema?\n\nEsto reiniciará los correlativos a 1 para el próximo turno y finalizará la sesión.")) {
-        localStorage.setItem('contadorPN', 1);
-        localStorage.setItem('contadorPC', 1);
-        localStorage.setItem('contadorICX', 1);
-
-        window.close();
-
-        document.body.innerHTML = `
-          <div style="text-align: center; color: #1e293b; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #f0f4f8;">
-            <h1 style="font-size: 2.5rem; color: #0f4c81; margin-bottom: 10px;">Sistema Apagado</h1>
-            <p style="font-size: 1.2rem; color: #64748b; margin-bottom: 20px;">Los correlativos han sido reiniciados a 1 correctamente.</p>
-            <p style="font-size: 1rem; color: #94a3b8;">Puede cerrar esta pestaña o recargar para iniciar un nuevo turno.</p>
-          </div>
-        `;
-      }
-    }
-
-    function loadExcel(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        
-        const rawData = XLSX.utils.sheet_to_json(worksheet);
-        
-        database = rawData.map(item => {
-          const keys = Object.keys(item);
-          const getVal = (target) => {
-            const key = keys.find(k => k.trim().toLowerCase() === target.toLowerCase());
-            return key ? item[key] : "";
-          };
-
-          return {
-            dni: String(getVal("dni")),
-            sex: getVal("Sex") || getVal("sexo"),
-            edad: getVal("edad"),
-            nombres: getVal("nombres"),
-            apellidos: getVal("apellidos")
-          };
-        });
-
-        document.getElementById('excel-status').innerText = '✓ Base de datos cargada (' + database.length + ' registros)';
-      };
-      reader.readAsArrayBuffer(file);
     }
   </script>
+
 </body>
 </html>
