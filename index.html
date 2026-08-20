@@ -683,14 +683,15 @@
       window.print();
     }
 
-    // Consulta nativa a APIPerú (Versión Pro para GitHub / Servidores Web)
+    // Búsqueda con APIPerú + Manejo de errores y llenado manual
     async function handleNuevoPaciente(event) {
       event.preventDefault();
-      const dni = document.getElementById('dni-nuevo').value.trim();
+      const dniInput = document.getElementById('dni-nuevo');
+      const dni = dniInput.value.trim();
       const btnSubmit = document.getElementById('btn-submit-nuevo');
 
       if (dni.length !== 8 || isNaN(dni)) {
-        alert("Ingrese un DNI válido de 8 dígitos numéricos.");
+        alert("Por favor, ingrese un número de DNI válido de 8 dígitos.");
         return;
       }
 
@@ -718,11 +719,11 @@
           const apellidos = `${res.apellido_paterno || ''} ${res.apellido_materno || ''}`.trim();
           procederConfirmacion(dni, nombres, apellidos);
         } else {
-          alert("DNI no encontrado o límite de consultas consumido en la API. Llene los datos manualmente.");
+          alert("⚠️ DNI no encontrado en RENIEC o límite de consultas consumido. Ingrese los datos manualmente.");
           procederConfirmacion(dni, "", "");
         }
       } catch (error) {
-        alert("Ocurrió un error al consultar el servicio de RENIEC. Proceda con el llenado manual.");
+        alert("⚠️ No se pudo conectar con el servicio de RENIEC. Ingrese los datos manualmente.");
         procederConfirmacion(dni, "", "");
       } finally {
         btnSubmit.innerText = "🔍 Consultar RENIEC";
