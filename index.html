@@ -683,7 +683,7 @@
       window.print();
     }
 
-    // Consulta con token APIPerú adaptada a ejecuciones locales (proxy CORS)
+    // Consulta nativa a APIPerú (Versión Pro para GitHub / Servidores Web)
     async function handleNuevoPaciente(event) {
       event.preventDefault();
       const dni = document.getElementById('dni-nuevo').value.trim();
@@ -698,31 +698,31 @@
       btnSubmit.disabled = true;
 
       const token = "c81fe686dfef3d4f8ff0f8dc4e542ef9a98ef16f3ff06c9e830c2dfb8e723225";
-      const proxyUrl = "https://corsproxy.io/?";
       const apiUrl = `https://apiperu.dev/api/dni/${dni}`;
 
       try {
-        const response = await fetch(proxyUrl + encodeURIComponent(apiUrl), {
+        const response = await fetch(apiUrl, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
           }
         });
 
         const data = await response.json();
 
-        if (data && data.success && data.data) {
+        if (response.ok && data && data.success && data.data) {
           const res = data.data;
           const nombres = res.nombres || "";
           const apellidos = `${res.apellido_paterno || ''} ${res.apellido_materno || ''}`.trim();
           procederConfirmacion(dni, nombres, apellidos);
         } else {
-          alert("DNI no encontrado o límite de consultas de la API consumido. Complete manualmente.");
+          alert("DNI no encontrado o límite de consultas consumido en la API. Llene los datos manualmente.");
           procederConfirmacion(dni, "", "");
         }
       } catch (error) {
-        alert("No se pudo conectar con el servidor de RENIEC. Proceda con el llenado manual.");
+        alert("Ocurrió un error al consultar el servicio de RENIEC. Proceda con el llenado manual.");
         procederConfirmacion(dni, "", "");
       } finally {
         btnSubmit.innerText = "🔍 Consultar RENIEC";
