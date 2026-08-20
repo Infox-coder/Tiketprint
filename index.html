@@ -286,6 +286,7 @@
       margin-top: 25px;
     }
 
+    /* Corrección de alineación para la tarjeta de confirmación */
     .info-item {
       font-size: 1.3rem;
       margin-bottom: 12px;
@@ -294,11 +295,19 @@
       justify-content: space-between;
       border-bottom: 1px dashed var(--border);
       padding-bottom: 10px;
+      gap: 15px;
     }
 
     .info-item:last-child {
       border-bottom: none;
       margin-bottom: 0;
+    }
+
+    .info-item label {
+      font-weight: 700;
+      color: var(--text);
+      min-width: 100px;
+      flex-shrink: 0;
     }
 
     .info-item span {
@@ -308,13 +317,19 @@
 
     .info-item input {
       font-size: 1.2rem;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      width: 60%;
-      text-align: right;
-      font-weight: 700;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 380px;
+      text-align: left;
+      font-weight: 600;
       color: var(--primary);
+      outline: none;
+    }
+
+    .info-item input:focus {
+      border-color: var(--accent);
     }
 
     .surgery-grid {
@@ -553,10 +568,10 @@
       <button class="btn-submit" onclick="searchPatient()">🔍 Buscar e Imprimir Historia</button>
 
       <div class="patient-info" id="patient-data" style="display: none;">
-        <div class="info-item">Apellidos: <span id="info-apellidos">-</span></div>
-        <div class="info-item">Nombres: <span id="info-nombres">-</span></div>
-        <div class="info-item">Edad: <span id="info-edad">-</span></div>
-        <div class="info-item">Sexo: <span id="info-sexo">-</span></div>
+        <div class="info-item"><label>Apellidos:</label><span id="info-apellidos">-</span></div>
+        <div class="info-item"><label>Nombres:</label><span id="info-nombres">-</span></div>
+        <div class="info-item"><label>Edad:</label><span id="info-edad">-</span></div>
+        <div class="info-item"><label>Sexo:</label><span id="info-sexo">-</span></div>
       </div>
     </div>
   </div>
@@ -683,7 +698,6 @@
       window.print();
     }
 
-    // Consulta con token APIPerú adaptada a ejecuciones locales (proxy CORS)
     async function handleNuevoPaciente(event) {
       event.preventDefault();
       const dni = document.getElementById('dni-nuevo').value.trim();
@@ -718,7 +732,7 @@
           const apellidos = `${res.apellido_paterno || ''} ${res.apellido_materno || ''}`.trim();
           procederConfirmacion(dni, nombres, apellidos);
         } else {
-          alert("DNI no encontrado o límite de consultas de la API consumido. Complete manualmente.");
+          alert("DNI no encontrado o límite de consultas consumido. Complete manualmente.");
           procederConfirmacion(dni, "", "");
         }
       } catch (error) {
