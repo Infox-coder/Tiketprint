@@ -286,7 +286,6 @@
       margin-top: 25px;
     }
 
-    /* Corrección de alineación para la tarjeta de confirmación */
     .info-item {
       font-size: 1.3rem;
       margin-bottom: 12px;
@@ -713,15 +712,20 @@
 
       const token = "c81fe686dfef3d4f8ff0f8dc4e542ef9a98ef16f3ff06c9e830c2dfb8e723225";
       const proxyUrl = "https://corsproxy.io/?";
-      const apiUrl = `https://apiperu.dev/api/dni/${dni}`;
+      const targetUrl = `https://apiperu.dev/api/dni/${dni}`;
+      const apiUrl = proxyUrl + encodeURIComponent(targetUrl);
 
       try {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
 
-
-
-
-
-        
+        if (!response.ok) {
+          throw new Error('Error en la solicitud');
+        }
 
         const data = await response.json();
 
@@ -735,6 +739,7 @@
           procederConfirmacion(dni, "", "");
         }
       } catch (error) {
+        console.error("Error al consultar RENIEC:", error);
         alert("No se pudo conectar con el servidor de RENIEC. Proceda con el llenado manual.");
         procederConfirmacion(dni, "", "");
       } finally {
